@@ -8,9 +8,17 @@
   <meta charset="utf-8"/>
   <title>La famiglia: il lavoro e la festa</title>
   <style type="text/css">
+    :root {
+      --background-color: #ffffff;
+      --text-color: #000000;
+      --quote-background-color: rgba(200, 200, 200, 0.3);
+      --quote-border-color: #e0e0e0;
+      --quote-text-color: #888888;
+    }
+
     .doc-content {
       box-sizing: border-box;
-      background-color: #ffffff;
+      background-color: var(--background-color);
       font-family: Lexend, Roboto, Arial;
       transform: scaleX(0.9);
       width: 110%;
@@ -22,7 +30,7 @@
       margin: 0 auto;
     }
     p,h1,h2,h3,h4,h5,h6 {
-      color:#000000;
+      color: var(--text-color);
       text-align:left;
       page-break-after:avoid;
       orphans:2;
@@ -33,51 +41,50 @@
       padding:0rem 0.1rem;
       margin:0.6rem 0.0rem;
     }
-    .text, pre{
+    .text, pre {
       font-family: Lexend, Roboto, Arial;
       font-size:11pt;
       font-weight:350;
       margin:0 0 0.3rem;
     }
-    .quote{
-      border-left:0.4rem solid #e0e0e0;
-      background-color:rgba(200,200,200,0.3);
-      padding:0.4rem 0.6rem 0.4rem 0.4rem;
+    .quote {
+      border-left: 0.4rem solid var(--quote-border-color);
+      background-color: var(--quote-background-color);
+      padding: 0.4rem 0.6rem 0.4rem 0.4rem;
       margin: 0.3rem 0.0rem;
-      font-style:italic;
-        
+      font-style: italic;
     }
     .quote br {
       display: block;
       margin-bottom: 0.3rem;
       content: "";
     }
-    .pag_num{
-      border-top:1pt solid #e0e0e0;
-      color:#888888;
+    .pag_num {
+      border-top: 1pt solid var(--quote-border-color);
+      color: var(--quote-text-color);
       font-size:8pt;
       padding: 0.5rem 0 0.1rem;
       margin-bottom: 0;
       font-style:italic;
     }
-    h1{
-      font-size:24pt;
-      font-weight:800;
-      line-height:1;
+    h1 {
+      font-size: 24pt;
+      font-weight: 800;
+      line-height: 1;
     }
-    h2{
-      font-size:16pt;
-      font-weight:650;
+    h2 {
+      font-size: 16pt;
+      font-weight: 650;
       margin: 0.2rem 0 0.2rem;
     }
-    h3{
-      font-size:12pt;
-      font-weight:500;
+    h3 {
+      font-size: 12pt;
+      font-weight: 500;
       margin: 0.7rem 0 0.3rem;
     }
-    h4{
-      font-size:11pt;
-      font-weight:550;
+    h4 {
+      font-size: 11pt;
+      font-weight: 550;
       margin: 0.8rem 0 0.2rem;
     }
   </style>
@@ -785,6 +792,62 @@
   <script>
     window.addEventListener("load",  (adjustMaxWidth= ()=>{document.querySelector('#page').style.maxWidth=(/Mobi|Android/i.test(navigator.userAgent)?"100%":"500pt");}));
     window.addEventListener("resize", adjustMaxWidth);
+
+    // Function to set the color mode based on the URL or toggle it
+    const setColorMode = () => {
+      const isDarkMode = window.location.search.includes('dark');
+      if (isDarkMode) {
+        // Set dark mode colors
+        document.documentElement.style.setProperty('--background-color', '#000000');
+        document.documentElement.style.setProperty('--text-color', '#ffffff');
+        document.documentElement.style.setProperty('--quote-background-color', 'rgba(50, 50, 50, 0.3)');
+        document.documentElement.style.setProperty('--quote-border-color', '#444444');
+        document.documentElement.style.setProperty('--quote-text-color', '#cccccc');
+      } else {
+        // Set normal colors
+        document.documentElement.style.setProperty('--background-color', '#ffffff');
+        document.documentElement.style.setProperty('--text-color', '#000000');
+        document.documentElement.style.setProperty('--quote-background-color', 'rgba(200, 200, 200, 0.3)');
+        document.documentElement.style.setProperty('--quote-border-color', '#e0e0e0');
+        document.documentElement.style.setProperty('--quote-text-color', '#888888');
+      }
+    };
+
+    // Function to toggle the color mode when h1 is double-clicked or double-tapped
+    const toggleColorMode = () => {
+      const isDarkMode = window.location.search.includes('dark');  // Track the current mode by checking URL
+
+      if (isDarkMode) {
+        // Switch to normal colors
+        document.documentElement.style.setProperty('--background-color', '#ffffff');
+        document.documentElement.style.setProperty('--text-color', '#000000');
+        document.documentElement.style.setProperty('--quote-background-color', 'rgba(200, 200, 200, 0.3)');
+        document.documentElement.style.setProperty('--quote-border-color', '#e0e0e0');
+        document.documentElement.style.setProperty('--quote-text-color', '#888888');
+        window.history.pushState({}, '', window.location.pathname); // Remove query parameter
+      } else {
+        // Switch to dark mode colors
+        document.documentElement.style.setProperty('--background-color', '#000000');
+        document.documentElement.style.setProperty('--text-color', '#ffffff');
+        document.documentElement.style.setProperty('--quote-background-color', 'rgba(50, 50, 50, 0.3)');
+        document.documentElement.style.setProperty('--quote-border-color', '#444444');
+        document.documentElement.style.setProperty('--quote-text-color', '#cccccc');
+        window.history.pushState({}, '', '?dark'); // Add query parameter
+      }
+    };
+
+    // Initialize color mode based on URL on page load
+    window.addEventListener('load', setColorMode);
+
+    // Add event listeners for double-click and double-tap on h1
+    const h1 = document.querySelector('h1');
+    h1.addEventListener('dblclick', toggleColorMode);
+    h1.addEventListener('touchend', (e) => {
+      if (e.detail === 2) {
+        toggleColorMode();
+      }
+    });
+
   </script>
 </body>
 </html>
