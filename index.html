@@ -792,8 +792,16 @@
     adjustMaxWidth(); // Once, ASAP
     window.addEventListener("resize", adjustMaxWidth);
     document.querySelector('h1').addEventListener('dblclick', () => colorMode('toggle'));
-    document.querySelector('h1').addEventListener('touchend', (e) => e.detail === 2 && (e.preventDefault(), colorMode('toggle')));
-  
+    let lastTap = 0;
+    document.querySelector('h1').addEventListener('touchstart', (e) => {
+        const currentTime = new Date().getTime();
+        if (currentTime - lastTap < 300) { // Detect double-tap (within 300ms)
+            e.preventDefault(); // Prevent double-tap zoom
+            colorMode('toggle'); // Toggle color mode
+        }
+        lastTap = currentTime; // Update the last tap time
+    });
+    
     function adjustMaxWidth() {
       document.querySelector('#page').style.maxWidth = (/Mobi|Android/i.test(navigator.userAgent) ? "100%" : "500pt");
     }
@@ -810,5 +818,6 @@
       window.history.pushState({}, '', m? '?dark': window.location.pathname);
     }
   </script>
+  
 </body>
 </html>
