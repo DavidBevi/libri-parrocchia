@@ -11,7 +11,7 @@
     :root {
       --background-color: #444;
       --text-color: #fff;
-      --quote-background-color: rgba(200, 200, 200, 0.3);
+      --quote-background-color: rgba(200, 200, 200, 0.9);
       --quote-border-color: #ddd;
       --quote-text-color: #888;
     }
@@ -49,7 +49,7 @@
     }
     .quote {
       border-left: 0.4rem solid var(--quote-border-color);
-      background-color: var(--quote-background-color);
+      background-color: rgba(150, 150, 150, 0.22);
       padding: 0.4rem 0.6rem 0.4rem 0.4rem;
       margin: 0.3rem 0.0rem;
       font-style: italic;
@@ -791,7 +791,7 @@
   </div>
   <script>
     colorMode('read'); // Once, ASAP
-    adjustMaxWidth();  // Once, ASAP
+    adjustMaxWidth(); // Once, ASAP
     window.addEventListener("resize", adjustMaxWidth);
     document.querySelector('h1').addEventListener('dblclick', () => colorMode('toggle'));
     document.querySelector('h1').addEventListener('touchend', (e) => { if (e.detail === 2) colorMode('toggle'); });
@@ -807,12 +807,12 @@
       // Apply the appropriate colors based on the URL query
       d.setProperty('--background-color', m? '#000' :'#fff');
       d.setProperty('--text-color', m? '#fff' :'#000');
-      d.setProperty('--quote-background-color', m? 'rgba(50, 50, 50, 0.3)' :'rgba(200, 200, 200, 0.3)');
       d.setProperty('--quote-border-color', m? '#444' :'#ddd');
       d.setProperty('--quote-text-color', m? '#ccc' :'#888');
       // Update the URL: If dark mode, remove the query parameter, if light mode, add '?dark'
       window.history.pushState({}, '', m? '?dark': window.location.pathname);
     }
   </script>
+  
 </body>
 </html>
