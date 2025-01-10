@@ -9,11 +9,11 @@
   <title>La famiglia: il lavoro e la festa</title>
   <style type="text/css">
     :root {
-      --background-color: #ffffff;
-      --text-color: #000000;
+      --background-color: #444;
+      --text-color: #fff;
       --quote-background-color: rgba(200, 200, 200, 0.3);
-      --quote-border-color: #e0e0e0;
-      --quote-text-color: #888888;
+      --quote-border-color: #ddd;
+      --quote-text-color: #888;
     }
 
     .doc-content {
@@ -790,64 +790,29 @@
     <pre>pag. 95 . . . 10. La festa tempo per la comunità</pre>
   </div>
   <script>
-    window.addEventListener("load",  (adjustMaxWidth= ()=>{document.querySelector('#page').style.maxWidth=(/Mobi|Android/i.test(navigator.userAgent)?"100%":"500pt");}));
+    colorMode('read'); // Once, ASAP
+    adjustMaxWidth();  // Once, ASAP
     window.addEventListener("resize", adjustMaxWidth);
-
-    // Function to set the color mode based on the URL or toggle it
-    const setColorMode = () => {
-      const isDarkMode = window.location.search.includes('dark');
-      if (isDarkMode) {
-        // Set dark mode colors
-        document.documentElement.style.setProperty('--background-color', '#000000');
-        document.documentElement.style.setProperty('--text-color', '#ffffff');
-        document.documentElement.style.setProperty('--quote-background-color', 'rgba(50, 50, 50, 0.3)');
-        document.documentElement.style.setProperty('--quote-border-color', '#444444');
-        document.documentElement.style.setProperty('--quote-text-color', '#cccccc');
-      } else {
-        // Set normal colors
-        document.documentElement.style.setProperty('--background-color', '#ffffff');
-        document.documentElement.style.setProperty('--text-color', '#000000');
-        document.documentElement.style.setProperty('--quote-background-color', 'rgba(200, 200, 200, 0.3)');
-        document.documentElement.style.setProperty('--quote-border-color', '#e0e0e0');
-        document.documentElement.style.setProperty('--quote-text-color', '#888888');
-      }
-    };
-
-    // Function to toggle the color mode when h1 is double-clicked or double-tapped
-    const toggleColorMode = () => {
-      const isDarkMode = window.location.search.includes('dark');  // Track the current mode by checking URL
-
-      if (isDarkMode) {
-        // Switch to normal colors
-        document.documentElement.style.setProperty('--background-color', '#ffffff');
-        document.documentElement.style.setProperty('--text-color', '#000000');
-        document.documentElement.style.setProperty('--quote-background-color', 'rgba(200, 200, 200, 0.3)');
-        document.documentElement.style.setProperty('--quote-border-color', '#e0e0e0');
-        document.documentElement.style.setProperty('--quote-text-color', '#888888');
-        window.history.pushState({}, '', window.location.pathname); // Remove query parameter
-      } else {
-        // Switch to dark mode colors
-        document.documentElement.style.setProperty('--background-color', '#000000');
-        document.documentElement.style.setProperty('--text-color', '#ffffff');
-        document.documentElement.style.setProperty('--quote-background-color', 'rgba(50, 50, 50, 0.3)');
-        document.documentElement.style.setProperty('--quote-border-color', '#444444');
-        document.documentElement.style.setProperty('--quote-text-color', '#cccccc');
-        window.history.pushState({}, '', '?dark'); // Add query parameter
-      }
-    };
-
-    // Initialize color mode based on URL on page load
-    window.addEventListener('load', setColorMode);
-
-    // Add event listeners for double-click and double-tap on h1
-    const h1 = document.querySelector('h1');
-    h1.addEventListener('dblclick', toggleColorMode);
-    h1.addEventListener('touchend', (e) => {
-      if (e.detail === 2) {
-        toggleColorMode();
-      }
-    });
-
+    document.querySelector('h1').addEventListener('dblclick', () => colorMode('toggle'));
+    document.querySelector('h1').addEventListener('touchend', (e) => { if (e.detail === 2) colorMode('toggle'); });
+  
+    function adjustMaxWidth() {
+      document.querySelector('#page').style.maxWidth = (/Mobi|Android/i.test(navigator.userAgent) ? "100%" : "500pt");
+    }
+  
+    function colorMode(action) {
+      const d = document.documentElement.style;
+      let m = window.location.search.includes('dark'); // Check if 'dark' is in the URL
+      if (action !== 'read') m = !m;  // Flip the mode when action is not 'read'
+      // Apply the appropriate colors based on the URL query
+      d.setProperty('--background-color', m? '#000' :'#fff');
+      d.setProperty('--text-color', m? '#fff' :'#000');
+      d.setProperty('--quote-background-color', m? 'rgba(50, 50, 50, 0.3)' :'rgba(200, 200, 200, 0.3)');
+      d.setProperty('--quote-border-color', m? '#444' :'#ddd');
+      d.setProperty('--quote-text-color', m? '#ccc' :'#888');
+      // Update the URL: If dark mode, remove the query parameter, if light mode, add '?dark'
+      window.history.pushState({}, '', m? '?dark': window.location.pathname);
+    }
   </script>
 </body>
 </html>
