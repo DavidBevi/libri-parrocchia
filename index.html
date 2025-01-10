@@ -69,6 +69,7 @@
       font-size: 24pt;
       font-weight: 800;
       line-height: 1;
+      touch-action: manipulation; /* Prevent zoom and other gestures */
     }
     h2 {
       font-size: 16pt;
@@ -801,7 +802,7 @@
         }
         lastTap = currentTime; // Update the last tap time
     });
-    
+
     function adjustMaxWidth() {
       document.querySelector('#page').style.maxWidth = (/Mobi|Android/i.test(navigator.userAgent) ? "100%" : "500pt");
     }
