@@ -792,7 +792,7 @@
     adjustMaxWidth(); // Once, ASAP
     window.addEventListener("resize", adjustMaxWidth);
     document.querySelector('h1').addEventListener('dblclick', () => colorMode('toggle'));
-    document.querySelector('h1').addEventListener('touchend', (e) => { if (e.detail === 2) colorMode('toggle'); });
+    document.querySelector('h1').addEventListener('touchend', (e) => e.detail === 2 && (e.preventDefault(), colorMode('toggle')));
   
     function adjustMaxWidth() {
       document.querySelector('#page').style.maxWidth = (/Mobi|Android/i.test(navigator.userAgent) ? "100%" : "500pt");
