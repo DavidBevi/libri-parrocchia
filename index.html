@@ -18,7 +18,7 @@
       overflow-x: hidden; /* Prevent horizontal scroll caused by scaling */
     }
     #page {
-      max-width: 500pt;
+      max-width: 23cm;
       margin: 0 auto;
     }
     p,h1,h2,h3,h4,h5,h6 {
@@ -675,5 +675,9 @@
     <pre>pag. 87 . . . 9. La festa tempo per il Signore</pre>
     <pre>pag. 95 . . . 10. La festa tempo per la comunità</pre>
   </div>
+  <script>
+    window.addEventListener("load",  (adjustMaxWidth= ()=>{document.querySelector('#page').style.maxWidth=(/Mobi|Android/i.test(navigator.userAgent)?"100%":"500pt");}));
+    window.addEventListener("resize", adjustMaxWidth);
+  </script>
 </body>
 </html>
