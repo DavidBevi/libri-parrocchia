@@ -135,26 +135,20 @@
 
   <script>
     // Initialize double-tap and theme toggling
-    document.querySelector('h1')?.addEventListener('dblclick', () => colorMode('toggle'));
-    let lastTapH1 = 0, lastTapH2 = 0;
+    function setupDoubleTap(selector, callback) {
+      let lastTap = 0;
+      document.querySelector(selector)?.addEventListener('touchstart', (e) => {
+        const currentTime = new Date().getTime();
+        if (currentTime - lastTap < 300) {
+          e.preventDefault();
+          callback();
+        }
+        lastTap = currentTime;
+      });
+    }
 
-    document.querySelector('h1')?.addEventListener('touchstart', (e) => {
-      const currentTime = new Date().getTime();
-      if (currentTime - lastTapH1 < 300) {
-        e.preventDefault();
-        colorMode('toggle');
-      }
-      lastTapH1 = currentTime;
-    });
-
-    document.querySelector('h2')?.addEventListener('touchstart', (e) => {
-      const currentTime = new Date().getTime();
-      if (currentTime - lastTapH2 < 300) {
-        e.preventDefault();
-        increaseFontSize();
-      }
-      lastTapH2 = currentTime;
-    });
+    setupDoubleTap('h1', () => colorMode('toggle'));
+    setupDoubleTap('h2', () => increaseFontSize());
 
     function increaseFontSize() {
       const elements = document.querySelectorAll('*');
