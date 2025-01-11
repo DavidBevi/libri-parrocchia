@@ -19,14 +19,14 @@
   </script>
 
   <style type="text/css">
-    /* Reset variables that were previously set by JS */
+    /* Default root variables for light theme */
     :root {
       --background-color: #444;
       --text-color: #fff;
       --quote-text-color: #888;
-      --font-base: 1; /* Default base font size multiplier */
-      --font-mult: 1; /* Default font size multiplier */
-      --pagnum-mult: 0.8; /* A default for pagination */
+      --font-base: 1;
+      --font-mult: 1;
+      --pagnum-mult: 0.8;
     }
 
     .doc-content {
@@ -109,10 +109,66 @@
 </head>
 <body class="doc-content">
   <script>
-    // Import book content once the page loads
-    fetch('book.html')
-      .then(res => res.text())
-      .then(html => document.body.innerHTML = new DOMParser().parseFromString(html, 'text/html').body.innerHTML);
+    // Theme and font size management functions
+    colorMode('read'); // Set theme based on URL
+    adjustMaxWidth();  // Adjust max-width based on device
+
+    window.addEventListener("resize", adjustMaxWidth);
+    
+    // Theme toggle on double-click of h1
+    document.querySelector('h1').addEventListener('dblclick', () => colorMode('toggle'));
+    
+    // Double-tap handler for h1
+    let lastTapH1 = 0;
+    document.querySelector('h1').addEventListener('touchstart', (e) => {
+        const currentTime = new Date().getTime();
+        if (currentTime - lastTapH1 < 300) { // Detect double-tap (within 300ms)
+            e.preventDefault(); // Prevent double-tap zoom
+            colorMode('toggle'); // Toggle color mode
+        }
+        lastTapH1 = currentTime; // Update the last tap time
+    });
+
+    // Double-tap handler for h2 (increase font size)
+    let lastTapH2 = 0;
+    document.querySelector('h2').addEventListener('touchstart', (e) => {
+        const currentTime = new Date().getTime();
+        if (currentTime - lastTapH2 < 300) { // Detect double-tap (within 300ms)
+            e.preventDefault(); // Prevent double-tap zoom
+            increaseFontSize(); // Increase font size
+        }
+        lastTapH2 = currentTime; // Update the last tap time
+    });
+
+    // Increase font size of all elements by 10%
+    function increaseFontSize() {
+      const elements = document.querySelectorAll('*'); // Select all elements
+      elements.forEach(el => {
+        const currentFontSize = window.getComputedStyle(el).fontSize; // Get the current font size
+        const newFontSize = parseFloat(currentFontSize) * 1.1; // Increase font size by 10%
+        el.style.fontSize = `${newFontSize}px`; // Apply the new font size
+      });
+    }
+
+    // Adjust max-width for mobile devices
+    function adjustMaxWidth() {
+      document.querySelector('#page').style.maxWidth = (/Mobi|Android/i.test(navigator.userAgent) ? "100%" : "500pt");
+    }
+
+    // Color mode switching function (read or toggle mode)
+    function colorMode(action) {
+      const d = document.documentElement.style;
+      let m = window.location.search.includes('dark'); // Check if 'dark' is in the URL
+      if (action !== 'read') m = !m;  // Flip the mode when action is not 'read'
+      
+      // Apply the appropriate colors based on the URL query
+      d.setProperty('--background-color', m ? '#000' : '#fff');
+      d.setProperty('--text-color', m ? '#fff' : '#000');
+      d.setProperty('--quote-text-color', m ? '#ccc' : '#888');
+      
+      // Update the URL: If dark mode, remove the query parameter, if light mode, add '?dark'
+      window.history.pushState({}, '', m ? '?dark' : window.location.pathname);
+    }
   </script>
 </body>
 </html>
