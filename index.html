@@ -39,6 +39,7 @@
       overflow-x: hidden;
     }
 
+    /* Page container styles */
     #page {
       width: 100%; /* Default to full width */
       max-width: 500pt; /* Max width for larger screens */
@@ -47,6 +48,15 @@
       font-family: Lexend, Roboto, Arial, sans-serif;
     }
 
+    /* Media Query for mobile (screen width <= 768px) */
+    @media (max-width: 768px) {
+      #page {
+        width: 100%; /* Take full width on small screens */
+        max-width: none; /* Remove max-width constraint */
+      }
+    }
+
+    /* Generic text styling */
     p, h1, h2, h3, h4, h5, h6 {
       color: var(--text-color);
       text-align: left;
@@ -112,9 +122,7 @@
   <script>
     // Set theme and adjust max width based on screen size
     colorMode('read'); // Apply theme based on URL
-    adjustMaxWidth();  // Adjust max-width based on device screen size
-
-    window.addEventListener("resize", adjustMaxWidth); // Recalculate max-width on resize
+    window.addEventListener("resize", adjustMaxWidth);  // Adjust max-width on resize
     
     // Double-click handler for theme toggle (on h1)
     document.querySelector('h1').addEventListener('dblclick', () => colorMode('toggle'));
@@ -149,11 +157,6 @@
         const newFontSize = parseFloat(currentFontSize) * 1.1; // Increase by 10%
         el.style.fontSize = `${newFontSize}px`;
       });
-    }
-
-    // Adjust the #page element max-width based on device screen width
-    function adjustMaxWidth() {
-      document.querySelector('#page').style.maxWidth = (/Mobi|Android/i.test(navigator.userAgent) ? "100%" : "500pt");
     }
 
     // Function to toggle color mode (light/dark)
