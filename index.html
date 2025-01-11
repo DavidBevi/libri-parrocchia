@@ -15,7 +15,7 @@
       const userAgent = navigator.userAgent;
       const root = document.documentElement.style;
       const { fontBase, fontMult } = {
-        Android: { fontBase: 1.1, fontMult: 2 },
+        Android: { fontBase: 1.1, fontMult: 2.2 },
         iPhone: { fontBase: 2, fontMult: 1 },
         Default: { fontBase: 1, fontMult: 1 }
       }[ /Android/i.test(userAgent) ? 'Android' :
@@ -38,6 +38,7 @@
       --quote-text-color: #888;
       --font-base: 1; /* Default base font size multiplier */
       --font-mult: 10; /* Default font size multiplier */
+      --pagnum-mult: calc(1 - 0.2 * var(--font-mult))
     }
 
     .doc-content {
@@ -70,20 +71,20 @@
     }
 
     h1 {
-      font-size: calc(3rem * var(--font-mult));
+      font-size: calc(2.5rem * var(--font-mult));
       font-weight: 800;
       line-height: 1;
       touch-action: manipulation;
     }
 
     h2 {
-      font-size: calc(1.8rem * var(--font-mult));
+      font-size: calc(1.75rem * var(--font-mult));
       font-weight: 650;
       margin: 0.2rem 0 0.2rem;
     }
 
     h3 {
-      font-size: calc(1.2rem * var(--font-mult));
+      font-size: calc(1.25rem * var(--font-mult));
       font-weight: 500;
       margin: 0.7rem 0 0.3rem;
     }
@@ -111,7 +112,7 @@
     .pag_num {
       border-top: 1pt solid rgba(150, 150, 150, 0.4);
       color: var(--quote-text-color);
-      font-size: calc(1rem - (0.25 * var(--font-mult)));
+      font-size: calc(1rem * var(--pagnum-mult));
       padding: 0.5rem 0 0.1rem;
       margin-bottom: 0;
       font-style: italic;
