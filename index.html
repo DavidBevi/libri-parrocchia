@@ -7,60 +7,46 @@
   
   <!-- Normalize.css for cross-browser consistency -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-
+  
   <!-- Correctly import Lexend font -->
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet" />
 
   <script>
-    // JavaScript to detect user-agent and inject appropriate CSS
-    function adjustMaxWidth() {
-      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-      const page = document.getElementById('page');
-      const style = document.createElement('style'); // Create a style tag dynamically
-      if (isMobile) {
-        style.innerHTML = `
-          #page {
-            width: 100%;
-            max-width: none;
-          }
-        `;
-      } else {
-        style.innerHTML = `
-          #page {
-            width: auto;
-            max-width: 500pt;
-            margin: 0 auto;
-          }
-        `;
+    const c = ["#000", "#fff", "#ccc", "#888"]; // Define the color constants
+
+    function colorMode(action) {
+      const d = document.documentElement.style;
+      let m = window.location.search.includes('dark'); // Check if 'dark' is in the URL
+      if (action !== 'read') m = !m;  // Toggle the mode if the action is not 'read'
+      
+      // Apply colors using the constants array `c`
+      d.setProperty('--background-color', m ? c[0] : c[1]);
+      d.setProperty('--text-color', m ? c[1] : c[0]);
+      d.setProperty('--quote-text-color', m ? c[2] : c[3]);
+      
+      // Update the URL based on the mode
+      window.history.pushState({}, '', m ? '?dark' : window.location.pathname);
+    }
+
+    // Immediately set the color mode to prevent FOUC
+    colorMode('read');
+
+    // Detect user agent and apply mobile/desktop-specific styles
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent); // Detect mobile devices
+    const style = document.createElement('style');
+    style.innerHTML = `
+      #page {
+        ${isMobile ? 'width: 100%;' : 'max-width: 500pt; margin: 0 auto;'}
       }
-      document.head.appendChild(style); // Append style to the head dynamically
-    }
-
-    // Set initial max-width based on user agent before any content is loaded
-    window.addEventListener('load', adjustMaxWidth);
-    window.addEventListener('resize', adjustMaxWidth); // Reapply on resize
-
+    `;
+    document.head.appendChild(style);
   </script>
 
-  <script>
-    // Import book content once the page loads
-    function loadBookContent() {
-      fetch('book.html')
-        .then(res => res.text())
-        .then(html => document.body.innerHTML = new DOMParser().parseFromString(html, 'text/html').body.innerHTML);
-    }
-  </script>
-  
-  <!-- The rest of the CSS will be placed below -->
   <style type="text/css">
-    /* Root default theme settings */
     :root {
-      --background-color: #444;
-      --text-color: #fff;
-      --quote-text-color: #888;
-      --font-base: 1; /* Default base font size multiplier */
-      --font-mult: 1; /* Default font size multiplier */
-      --pagnum-mult: 0.8; /* A default for pagination */
+      --background-color: #444; /* Default background color */
+      --text-color: #fff; /* Default text color */
+      --quote-text-color: #888; /* Default quote text color */
     }
 
     .doc-content {
@@ -74,8 +60,6 @@
     }
 
     #page {
-      max-width: 23cm; /* Default max-width */
-      margin: 0 auto;
       font-size: 11pt;
       font-family: Lexend, Roboto, Arial, sans-serif;
     }
@@ -140,60 +124,43 @@
       font-style: italic;
     }
   </style>
-
 </head>
-<body class="doc-content" onload="loadBookContent()">
+<body class="doc-content">
   <script>
-    // The following functions handle theme toggling and double tap on h1/h2
-    function colorMode(action) {
-      const d = document.documentElement.style;
-      let m = window.location.search.includes('dark');  // Check if dark mode is in URL
-      if (action !== 'read') m = !m;  // Toggle mode if action is not 'read'
+    // Book import logic remains here
+    fetch('book.html')
+      .then(res => res.text())
+      .then(html => document.body.innerHTML = new DOMParser().parseFromString(html, 'text/html').body.innerHTML);
+  </script>
 
-      // Set theme colors
-      d.setProperty('--background-color', m ? '#000' : '#fff');
-      d.setProperty('--text-color', m ? '#fff' : '#000');
-      d.setProperty('--quote-text-color', m ? '#ccc' : '#888');
+  <script>
+    // Initialize double-tap and theme toggling
+    document.querySelector('h1')?.addEventListener('dblclick', () => colorMode('toggle'));
+    let lastTapH1 = 0, lastTapH2 = 0;
 
-      // Update URL (add/remove dark parameter)
-      window.history.pushState({}, '', m ? '?dark' : window.location.pathname);
-    }
-
-    // Event listener for theme toggle (on double-tap of h1)
-    let lastTapH1 = 0;
-    document.addEventListener('touchstart', (e) => {
+    document.querySelector('h1')?.addEventListener('touchstart', (e) => {
       const currentTime = new Date().getTime();
-      const h1 = document.querySelector('h1');
-      if (e.target === h1) {
-        if (currentTime - lastTapH1 < 300) {
-          e.preventDefault(); // Prevent zoom
-          colorMode('toggle');  // Toggle theme
-        }
-        lastTapH1 = currentTime;
+      if (currentTime - lastTapH1 < 300) {
+        e.preventDefault();
+        colorMode('toggle');
       }
+      lastTapH1 = currentTime;
     });
 
-    // Event listener for double-tap on h2 (increase font size)
-    let lastTapH2 = 0;
-    document.addEventListener('touchstart', (e) => {
+    document.querySelector('h2')?.addEventListener('touchstart', (e) => {
       const currentTime = new Date().getTime();
-      const h2 = document.querySelector('h2');
-      if (e.target === h2) {
-        if (currentTime - lastTapH2 < 300) {
-          e.preventDefault();  // Prevent zoom
-          increaseFontSize();  // Increase font size
-        }
-        lastTapH2 = currentTime;
+      if (currentTime - lastTapH2 < 300) {
+        e.preventDefault();
+        increaseFontSize();
       }
+      lastTapH2 = currentTime;
     });
 
-    // Increase font size by 10%
     function increaseFontSize() {
       const elements = document.querySelectorAll('*');
       elements.forEach(el => {
-        const currentFontSize = window.getComputedStyle(el).fontSize;
-        const newFontSize = parseFloat(currentFontSize) * 1.1; // Increase by 10%
-        el.style.fontSize = `${newFontSize}px`;
+        const currentFontSize = parseFloat(window.getComputedStyle(el).fontSize);
+        el.style.fontSize = `${currentFontSize * 1.1}px`;
       });
     }
   </script>
