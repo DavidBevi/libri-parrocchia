@@ -7,10 +7,51 @@
   
   <!-- Normalize.css for cross-browser consistency -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-  
+
   <!-- Correctly import Lexend font -->
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet" />
+
+  <script>
+    // JavaScript to detect user-agent and inject appropriate CSS
+    function adjustMaxWidth() {
+      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+      const page = document.getElementById('page');
+      const style = document.createElement('style'); // Create a style tag dynamically
+      if (isMobile) {
+        style.innerHTML = `
+          #page {
+            width: 100%;
+            max-width: none;
+          }
+        `;
+      } else {
+        style.innerHTML = `
+          #page {
+            width: auto;
+            max-width: 500pt;
+            margin: 0 auto;
+          }
+        `;
+      }
+      document.head.appendChild(style); // Append style to the head dynamically
+    }
+
+    // Set initial max-width based on user agent before any content is loaded
+    window.addEventListener('load', adjustMaxWidth);
+    window.addEventListener('resize', adjustMaxWidth); // Reapply on resize
+
+  </script>
+
+  <script>
+    // Import book content once the page loads
+    function loadBookContent() {
+      fetch('book.html')
+        .then(res => res.text())
+        .then(html => document.body.innerHTML = new DOMParser().parseFromString(html, 'text/html').body.innerHTML);
+    }
+  </script>
   
+  <!-- The rest of the CSS will be placed below -->
   <style type="text/css">
     /* Root default theme settings */
     :root {
@@ -100,25 +141,10 @@
     }
   </style>
 
+</head>
+<body class="doc-content" onload="loadBookContent()">
   <script>
-    // Function to adjust max-width based on user agent (Mobile vs Desktop)
-    function adjustMaxWidth() {
-      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-      const page = document.getElementById('page');
-      if (isMobile) {
-        page.style.width = '100%';
-        page.style.maxWidth = 'none';
-      } else {
-        page.style.width = 'auto';
-        page.style.maxWidth = '500pt';  // Max width for desktop
-      }
-    }
-
-    // Set initial max-width based on user agent
-    window.addEventListener('load', adjustMaxWidth);  // Run when the page loads
-    window.addEventListener('resize', adjustMaxWidth); // Reapply on resize
-
-    // Functions for color mode (theme toggle)
+    // The following functions handle theme toggling and double tap on h1/h2
     function colorMode(action) {
       const d = document.documentElement.style;
       let m = window.location.search.includes('dark');  // Check if dark mode is in URL
@@ -170,14 +196,6 @@
         el.style.fontSize = `${newFontSize}px`;
       });
     }
-  </script>
-</head>
-<body class="doc-content">
-  <script>
-    // Import book content once the page loads
-    fetch('book.html')
-      .then(res => res.text())
-      .then(html => document.body.innerHTML = new DOMParser().parseFromString(html, 'text/html').body.innerHTML);
   </script>
 </body>
 </html>
