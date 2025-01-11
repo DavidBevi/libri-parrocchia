@@ -5,100 +5,100 @@
   <meta charset="utf-8"/>
   <title>La famiglia: il lavoro e la festa</title>
   
-  <!-- Normalize.css for cross-browser consistency -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-  
-  <!-- Correctly import Lexend font -->
+  <!-- Import Lexend font -->
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet" />
   
-  <!-- Import book -->
+  <!-- Early Inline Script to Detect User-Agent and Set Variables -->
   <script>
-    fetch('book.html')
-      .then(res => res.text())
-      .then(html => document.body.innerHTML = new DOMParser().parseFromString(html, 'text/html').body.innerHTML);
+    // Immediately sets font base and multiplier based on the user-agent
+    (function() {
+      const userAgent = navigator.userAgent;
+      const root = document.documentElement.style;
+      const { fontBase, fontMult } = {
+        Android: { fontBase: 1.1, fontMult: 2 },
+        iPhone: { fontBase: 2, fontMult: 1 },
+        Default: { fontBase: 1, fontMult: 1 }
+      }[ /Android/i.test(userAgent) ? 'Android' :
+          /iPhone|iPad|iPod/i.test(userAgent) ? 'iPhone' : 'Default' ];
+      root.setProperty('--font-base', fontBase);
+      root.setProperty('--font-mult', fontMult);
+    })();
   </script>
-
-  <style type="text/css">
-    /* Default root variables for light theme */
+  
+  <style>
+    /* Root Variables */
     :root {
       --background-color: #444;
       --text-color: #fff;
       --quote-text-color: #888;
       --font-base: 1;
       --font-mult: 1;
-      --pagnum-mult: 0.8;
+    }
+
+    /* Global Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Lexend', Roboto, Arial, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
     }
 
     .doc-content {
       box-sizing: border-box;
-      background-color: var(--background-color);
-      font-family: Lexend, Roboto, Arial, sans-serif;
       transform: scaleX(0.9);
       width: 110%;
       transform-origin: left;
       overflow-x: hidden;
     }
 
-    /* Page container styles */
     #page {
-      width: 100%; /* Default to full width */
-      max-width: 500pt; /* Max width for larger screens */
-      margin: 0 auto; /* Center horizontally */
-      font-size: 11pt;
-      font-family: Lexend, Roboto, Arial, sans-serif;
+      max-width: calc(23cm * var(--font-base));
+      margin: 0 auto;
+      font-size: calc(11pt * var(--font-base));
     }
 
-    /* Media Query for mobile (screen width <= 768px) */
-    @media (max-width: 768px) {
-      #page {
-        width: 100%; /* Take full width on small screens */
-        max-width: none; /* Remove max-width constraint */
-      }
-    }
-
-    /* Generic text styling */
     p, h1, h2, h3, h4, h5, h6 {
-      color: var(--text-color);
       text-align: left;
       page-break-after: avoid;
       orphans: 2;
       widows: 2;
       line-height: 1.3;
       font-weight: 400;
-      padding: 0rem 0.1rem;
-      margin: 0.6rem 0.0rem;
+      padding: 0 0.1rem;
+      margin: 0.6rem 0;
     }
 
     h1 {
-      font-size: 2.5rem;
+      font-size: calc(3rem * var(--font-mult));
       font-weight: 800;
       line-height: 1;
       touch-action: manipulation;
     }
 
     h2 {
-      font-size: 1.75rem;
+      font-size: calc(1.8rem * var(--font-mult));
       font-weight: 650;
-      margin: 0.2rem 0 0.2rem;
+      margin: 0.2rem 0;
     }
 
     h3 {
-      font-size: 1.25rem;
+      font-size: calc(1.2rem * var(--font-mult));
       font-weight: 500;
       margin: 0.7rem 0 0.3rem;
     }
 
     h4 {
-      font-size: 1rem;
+      font-size: calc(1rem * var(--font-mult));
       font-weight: 550;
-      margin: 0.8rem 0 0.2rem;
+      margin: 0.8rem 0;
     }
 
     .quote {
       border-left: 4pt solid rgba(150, 150, 150, 0.4);
       background-color: rgba(150, 150, 150, 0.2);
-      padding: 0.4rem 0.6rem 0.4rem 0.4rem;
-      margin: 0.3rem 0.0rem;
+      padding: 0.4rem 0.6rem;
+      margin: 0.3rem 0;
       font-style: italic;
     }
 
@@ -111,7 +111,7 @@
     .pag_num {
       border-top: 1pt solid rgba(150, 150, 150, 0.4);
       color: var(--quote-text-color);
-      font-size: 1rem;
+      font-size: calc(0.8rem * var(--font-mult));
       padding: 0.5rem 0 0.1rem;
       margin-bottom: 0;
       font-style: italic;
@@ -120,59 +120,44 @@
 </head>
 <body class="doc-content">
   <script>
-    // Set theme and adjust max width based on screen size
-    colorMode('read'); // Apply theme based on URL
-    window.addEventListener("resize", adjustMaxWidth);  // Adjust max-width on resize
-    
-    // Double-click handler for theme toggle (on h1)
-    document.querySelector('h1').addEventListener('dblclick', () => colorMode('toggle'));
-    
-    // Double-tap handler for h1 (theme toggle)
-    let lastTapH1 = 0;
-    document.querySelector('h1').addEventListener('touchstart', (e) => {
-      const currentTime = new Date().getTime();
-      if (currentTime - lastTapH1 < 300) { // Detect double-tap (within 300ms)
-        e.preventDefault(); // Prevent zoom on double-tap
-        colorMode('toggle'); // Toggle theme
-      }
-      lastTapH1 = currentTime; // Update last tap time
-    });
-
-    // Double-tap handler for h2 (increase font size)
-    let lastTapH2 = 0;
-    document.querySelector('h2').addEventListener('touchstart', (e) => {
-      const currentTime = new Date().getTime();
-      if (currentTime - lastTapH2 < 300) { // Detect double-tap (within 300ms)
-        e.preventDefault(); // Prevent zoom on double-tap
-        increaseFontSize(); // Increase font size
-      }
-      lastTapH2 = currentTime; // Update last tap time
-    });
-
-    // Function to increase the font size of all elements by 10%
-    function increaseFontSize() {
-      const elements = document.querySelectorAll('*');
-      elements.forEach(el => {
-        const currentFontSize = window.getComputedStyle(el).fontSize;
-        const newFontSize = parseFloat(currentFontSize) * 1.1; // Increase by 10%
-        el.style.fontSize = `${newFontSize}px`;
-      });
+    // Adjust maximum width for mobile/desktop
+    function adjustMaxWidth() {
+      document.querySelector('#page').style.maxWidth = (/Mobi|Android/i.test(navigator.userAgent) ? "100%" : "500pt");
     }
 
-    // Function to toggle color mode (light/dark)
+    // Toggle color mode
     function colorMode(action) {
       const d = document.documentElement.style;
       let m = window.location.search.includes('dark'); // Check if 'dark' is in the URL
-      if (action !== 'read') m = !m;  // Toggle mode if action is not 'read'
-      
-      // Apply color mode
+      if (action !== 'read') m = !m; // Flip the mode
       d.setProperty('--background-color', m ? '#000' : '#fff');
       d.setProperty('--text-color', m ? '#fff' : '#000');
       d.setProperty('--quote-text-color', m ? '#ccc' : '#888');
-      
-      // Update URL: Add or remove '?dark' parameter
       window.history.pushState({}, '', m ? '?dark' : window.location.pathname);
     }
+
+    // Increase font size
+    function increaseFontSize() {
+      document.querySelectorAll('*').forEach(el => {
+        const currentSize = parseFloat(window.getComputedStyle(el).fontSize);
+        el.style.fontSize = `${currentSize * 1.1}px`;
+      });
+    }
+
+    // Event listeners for interactions
+    document.addEventListener('DOMContentLoaded', () => {
+      adjustMaxWidth();
+      document.querySelector('h1').addEventListener('dblclick', () => colorMode('toggle'));
+      let lastTapH1 = 0;
+      document.querySelector('h1').addEventListener('touchstart', (e) => {
+        const now = Date.now();
+        if (now - lastTapH1 < 300) {
+          e.preventDefault();
+          colorMode('toggle');
+        }
+        lastTapH1 = now;
+      });
+    });
   </script>
 </body>
 </html>
