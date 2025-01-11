@@ -793,15 +793,39 @@
     adjustMaxWidth(); // Once, ASAP
     window.addEventListener("resize", adjustMaxWidth);
     document.querySelector('h1').addEventListener('dblclick', () => colorMode('toggle'));
-    let lastTap = 0;
+    let lastTapH1 = 0;
+    let lastTapH2 = 0;
+
+    // Double-tap handler for h1
     document.querySelector('h1').addEventListener('touchstart', (e) => {
         const currentTime = new Date().getTime();
-        if (currentTime - lastTap < 300) { // Detect double-tap (within 300ms)
+        if (currentTime - lastTapH1 < 300) { // Detect double-tap (within 300ms)
             e.preventDefault(); // Prevent double-tap zoom
             colorMode('toggle'); // Toggle color mode
-        }
-        lastTap = currentTime; // Update the last tap time
+    }
+    lastTapH1 = currentTime; // Update the last tap time
     });
+
+    // Double-tap handler for h2
+    document.querySelector('h2').addEventListener('touchstart', (e) => {
+        const currentTime = new Date().getTime();
+        if (currentTime - lastTapH2 < 300) { // Detect double-tap (within 300ms)
+            e.preventDefault(); // Prevent double-tap zoom
+            increaseFontSize(); // Increase font size
+        }
+        lastTapH2 = currentTime; // Update the last tap time
+    });
+
+    // Function to increase the font size of every element by 10%
+    function increaseFontSize() {
+        const elements = document.querySelectorAll('*'); // Select all elements
+        elements.forEach(el => {
+            const currentFontSize = window.getComputedStyle(el).fontSize; // Get the current font size
+            const newFontSize = parseFloat(currentFontSize) * 1.1; // Increase font size by 10%
+            el.style.fontSize = `${newFontSize}px`; // Apply the new font size
+        });
+    }
+
 
     function adjustMaxWidth() {
       document.querySelector('#page').style.maxWidth = (/Mobi|Android/i.test(navigator.userAgent) ? "100%" : "500pt");
